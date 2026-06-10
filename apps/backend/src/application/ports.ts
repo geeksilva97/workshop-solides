@@ -1,4 +1,6 @@
 import type { Company, CompanySize } from '../domain/company.ts';
+import type { Diagnostico } from '../domain/diagnostico.ts';
+import type { KpiPercentile } from './percentis.ts';
 
 /** One entry of a ranking produced by a retrieval mechanism. */
 export type RankEntry = { companyId: string; score: number; rank: number };
@@ -38,6 +40,22 @@ export type Scored = { id: string; score: number };
  */
 export interface Reranker {
   rerank(query: string, docs: { id: string; text: string }[]): Promise<Scored[]>;
+}
+
+/** What the judge reasons over: the client company + its KPI percentiles. */
+export type DiagnosisInput = {
+  empresa: string;
+  setor: string;
+  kpis: KpiPercentile[];
+};
+
+/**
+ * Judge port - turns the cold percentiles into an actionable diagnosis. The
+ * production adapter forces a schema via Anthropic tool use; the application
+ * re-validates whatever comes back.
+ */
+export interface Judge {
+  diagnose(input: DiagnosisInput): Promise<Diagnostico>;
 }
 
 /** Thrown by stubs that belong to a live-build step not yet implemented. */
