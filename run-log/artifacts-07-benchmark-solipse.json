@@ -1,0 +1,133 @@
+{
+    "empresa": "Sol\u00edpse Tecnologia",
+    "cohort": [
+        {
+            "id": "11111111000111",
+            "name": "Nuvexa Cloud",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "22222222000122",
+            "name": "Fluxo Pagamentos",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "77777777000177",
+            "name": "Lumen Edtech",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "33333333000133",
+            "name": "Cortex Dados",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "44444444000144",
+            "name": "Verde Logtech",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "55555555000155",
+            "name": "Atlas HRTech",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "88888888000188",
+            "name": "\u00d3rbita Devtools",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "66666666000166",
+            "name": "Pixel Commerce",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "13131313000113",
+            "name": "Sa\u00fade Plena Cl\u00ednicas",
+            "sector": "saude"
+        },
+        {
+            "id": "12121212000112",
+            "name": "TransLog Cargas",
+            "sector": "logistica"
+        },
+        {
+            "id": "99999999000199",
+            "name": "Boa Safra Alimentos",
+            "sector": "industria"
+        },
+        {
+            "id": "10101010000110",
+            "name": "Rede Varejomais",
+            "sector": "varejo"
+        }
+    ],
+    "kpis": [
+        {
+            "kpi": "turnover_voluntario",
+            "valor": 28.4,
+            "p25": 11,
+            "p50": 13.2,
+            "p75": 15.4,
+            "p90": 19.5,
+            "posicao": "p100",
+            "sinal": "bad"
+        },
+        {
+            "kpi": "absenteismo",
+            "valor": 5.2,
+            "p25": 3,
+            "p50": 3.3,
+            "p75": 4.3,
+            "p90": 5.4,
+            "posicao": "p83",
+            "sinal": "bad"
+        },
+        {
+            "kpi": "time_to_hire",
+            "valor": 32,
+            "p25": 34.5,
+            "p50": 41.5,
+            "p75": 45.5,
+            "p90": 51.5,
+            "posicao": "p25",
+            "sinal": "ok"
+        },
+        {
+            "kpi": "enps",
+            "valor": -5,
+            "p25": 13.5,
+            "p50": 20.5,
+            "p75": 27.3,
+            "p90": 30.7,
+            "posicao": "p0",
+            "sinal": "bad"
+        }
+    ],
+    "diagnostico": {
+        "diagnostico_principal": "Problema de reten\u00e7\u00e3o: a empresa perde gente em volume bem acima do cohort compar\u00e1vel.",
+        "indicadores_criticos": [
+            {
+                "kpi": "turnover_voluntario",
+                "leitura": "turnover_voluntario em 28.4 (p100 do cohort, mediana 13.2).",
+                "severidade": "alta"
+            },
+            {
+                "kpi": "absenteismo",
+                "leitura": "absenteismo em 5.2 (p83 do cohort, mediana 3.3).",
+                "severidade": "alta"
+            },
+            {
+                "kpi": "enps",
+                "leitura": "enps em -5 (p0 do cohort, mediana 20.5).",
+                "severidade": "alta"
+            }
+        ],
+        "hipoteses": [
+            "Onboarding ou primeiros meses de casa",
+            "Carga de trabalho ou clareza de carreira",
+            "Compensa\u00e7\u00e3o vs mercado regional"
+        ],
+        "proxima_acao": "Rodar pesquisa de sa\u00edda qualitativa nos \u00faltimos desligamentos volunt\u00e1rios e cruzar com engajamento por \u00e1rea."
+    }
+}
