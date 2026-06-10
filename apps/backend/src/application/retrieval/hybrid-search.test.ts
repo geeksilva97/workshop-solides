@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { hybridSearch } from './hybrid-search.ts';
 import { InMemoryCompanyRepository } from '../../infra/db/in-memory-company-repository.ts';
+import { LocalCrossEncoderReranker } from '../../infra/reranker/local-cross-encoder.ts';
 import { SOLIPSE } from '../../infra/seed/companies.ts';
 
 const profile = {
@@ -21,4 +22,17 @@ test('hybridSearch fuses dense + lexical via RRF (no longer a stub)', async () =
   // the SaaS cluster should dominate the top of the fused ranking
   const topIds = fused.slice(0, 5).map((f) => f.companyId);
   assert.ok(!topIds.includes('99999999000199')); // off-domain alimentos
+});
+
+test('with a reranker, hybridSearch reorders and trims to finalSize', async () => {
+  const repo = new InMemoryCompanyRepository();
+  const reranker = new LocalCrossEncoderReranker();
+  const cohort = await hybridSearch(repo, profile, { reranker, finalSize: 5 });
+
+  assert.equal(cohort.length, 5);
+  assert.equal(cohort[0]!.rank, 1);
+  // reranked scores are descending
+  for (let i = 1; i < cohort.length; i++) {
+    assert.ok(cohort[i - 1]!.score >= cohort[i]!.score);
+  }
 });

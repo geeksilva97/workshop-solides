@@ -28,6 +28,18 @@ export interface CompanyRepository {
   searchLexical(profile: SearchProfile, topN: number): Promise<Ranking>;
 }
 
+/** A (id, score) pair, e.g. a reranker verdict for one candidate. */
+export type Scored = { id: string; score: number };
+
+/**
+ * Reranker port - a cross-encoder that scores each (query, document) pair
+ * jointly. Implemented in production by Cohere Rerank / BGE; here by a local
+ * deterministic stand-in. The application never knows which.
+ */
+export interface Reranker {
+  rerank(query: string, docs: { id: string; text: string }[]): Promise<Scored[]>;
+}
+
 /** Thrown by stubs that belong to a live-build step not yet implemented. */
 export class NotImplementedYetError extends Error {
   constructor(step: string) {
