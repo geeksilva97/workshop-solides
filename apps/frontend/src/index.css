@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+
+/* Solides brand tokens (verified): purple primary, amber accent, navy text,
+   Poppins, pill buttons, ~14px card corners. Green is a semantic signal only. */
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #80297d;
+  --color-brand-bright: #d61ced;
+  --color-accent: #ffba00;
+  --color-navy: #33475b;
+  --color-ink: #1f2733;
+  --color-muted: #6b7a90;
+  --color-ok: #16a34a;
+  --color-warn: #f59e0b;
+  --color-bad: #e11d48;
+  --color-surface: #f6f4f8;
+
+  --radius-card: 14px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
