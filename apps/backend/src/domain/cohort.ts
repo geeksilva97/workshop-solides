@@ -2,12 +2,23 @@ import type { Company } from './company.ts';
 import type { KpiKey } from './kpis.ts';
 
 /**
- * A cohort of comparable companies.
- *
- * NOTE (live-build): in step 05 this factory gains the k-anonymity invariant -
- * a cohort below MIN_COHORT_SIZE companies cannot be constructed, because
- * publishing aggregates over too few companies leaks individual data (LGPD).
- * For now `of` accepts any non-empty set; the guard is added on stage.
+ * k-anonymity threshold: publishing aggregates over fewer than this many
+ * companies risks reverse-identifying an individual company's numbers (LGPD).
+ * A cohort below it is not a valid object.
+ */
+export const MIN_COHORT_SIZE = 5;
+
+export class CohortTooSmallError extends Error {
+  constructor(size: number) {
+    super(`cohort has ${size} companies; k-anonymity requires at least ${MIN_COHORT_SIZE}`);
+    this.name = 'CohortTooSmallError';
+  }
+}
+
+/**
+ * A cohort of comparable companies. The k-anonymity invariant is enforced at
+ * construction: it is impossible to hold an under-sized Cohort in memory. This
+ * rule comes from the domain (LGPD), not from the caller or the database.
  */
 export class Cohort {
   readonly companies: readonly Company[];
@@ -17,6 +28,9 @@ export class Cohort {
   }
 
   static of(companies: readonly Company[]): Cohort {
+    if (companies.length < MIN_COHORT_SIZE) {
+      throw new CohortTooSmallError(companies.length);
+    }
     return new Cohort(companies);
   }
 
