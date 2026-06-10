@@ -1,9 +1,5 @@
-import {
-  type CompanyRepository,
-  type Ranking,
-  type SearchProfile,
-  NotImplementedYetError,
-} from '../ports.ts';
+import { type CompanyRepository, type Ranking, type SearchProfile } from '../ports.ts';
+import { rrf } from './rrf.ts';
 
 export type HybridConfig = {
   /** how many to pull from each retrieval leg before fusion */
@@ -28,11 +24,9 @@ export async function hybridSearch(
   const topN = config.topN ?? 30;
 
   const dense = await repo.searchDense(profile, topN); // prebuilt
-  const lexical = await repo.searchLexical(profile, topN); // step 02 (throws until built)
+  const lexical = await repo.searchLexical(profile, topN); // step 02
 
-  void dense;
-  void lexical;
-  // step 03: const fused = rrf([dense, lexical]);
+  const fused = rrf([dense, lexical]).slice(0, topN); // step 03
   // step 04: const reranked = await reranker.rerank(profile.description, docsOf(fused));
-  throw new NotImplementedYetError('step 03 (RRF fusion)');
+  return fused;
 }
