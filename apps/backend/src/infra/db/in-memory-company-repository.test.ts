@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { InMemoryCompanyRepository } from './in-memory-company-repository.ts';
-import { NotImplementedYetError } from '../../application/ports.ts';
 import { SOLIPSE } from '../seed/companies.ts';
 
 const profile = {
@@ -25,7 +24,13 @@ test('dense search ranks the SaaS cluster above off-domain companies', async () 
   assert.ok(!topIds.includes('99999999000199'));
 });
 
-test('lexical search is still a step-02 stub', async () => {
+test('lexical search (BM25) matches companies that share literal terms', async () => {
   const repo = new InMemoryCompanyRepository();
-  await assert.rejects(() => repo.searchLexical(profile, 30), NotImplementedYetError);
+  const ranking = await repo.searchLexical(profile, 30);
+
+  assert.ok(ranking.length > 0);
+  assert.equal(ranking[0]!.rank, 1);
+  // every returned company shares at least one literal term with the profile;
+  // a company with no shared terms scores 0 and is filtered out
+  assert.ok(ranking.every((r) => r.score > 0));
 });

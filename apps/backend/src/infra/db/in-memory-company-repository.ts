@@ -1,11 +1,7 @@
 import type { Company } from '../../domain/company.ts';
-import {
-  type CompanyRepository,
-  type Ranking,
-  type SearchProfile,
-  NotImplementedYetError,
-} from '../../application/ports.ts';
+import { type CompanyRepository, type Ranking, type SearchProfile } from '../../application/ports.ts';
 import { POOL } from '../seed/companies.ts';
+import { bm25 } from '../lexical/bm25.ts';
 
 /**
  * In-memory CompanyRepository for the reference run (no Postgres needed).
@@ -43,9 +39,16 @@ export class InMemoryCompanyRepository implements CompanyRepository {
     return scored.map((s, i) => ({ companyId: s.id, score: s.score, rank: i + 1 }));
   }
 
-  async searchLexical(_profile: SearchProfile, _topN: number): Promise<Ranking> {
-    // LIVE-BUILD step 02 (BM25). Stays a stub until built on stage.
-    throw new NotImplementedYetError('step 02 (BM25 lexical search)');
+  async searchLexical(profile: SearchProfile, topN: number): Promise<Ranking> {
+    // BM25 over the company descriptions. The query is built from the literal
+    // terms of the profile (description + sector + region + tags) - this is the
+    // lexical leg that catches the exact terms the dense search blurs.
+    const query = [profile.description, profile.sector, profile.region, ...profile.tags].join(' ');
+    const docs = this.companies.map((c) => ({ id: c.id, text: c.description }));
+
+    return bm25(query, docs)
+      .slice(0, topN)
+      .map((s, i) => ({ companyId: s.id, score: s.score, rank: i + 1 }));
   }
 
   private buildVocab(extra: readonly string[]): string[] {
