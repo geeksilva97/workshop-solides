@@ -1,0 +1,173 @@
+{
+    "empresa": "Sol\u00edpse",
+    "cohort": [
+        {
+            "id": "10461302000110",
+            "name": "SOLIDES TECNOLOGIA S/A",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "13427325000105",
+            "name": "LAUNCH PAD TECNOLOGIA, SERVICOS E PAGAMENTOS LTDA.",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "00416968000101",
+            "name": "BANCO INTER S.A",
+            "sector": "servi\u00e7os financeiros"
+        },
+        {
+            "id": "02800026000140",
+            "name": "COGNA EDUCACAO S.A",
+            "sector": "educa\u00e7\u00e3o"
+        },
+        {
+            "id": "12104241000160",
+            "name": "ONCOCLINICAS DO BRASIL SERVICOS MEDICOS S.A.",
+            "sector": "sa\u00fade"
+        },
+        {
+            "id": "16670085000155",
+            "name": "LOCALIZA RENT A CAR SA",
+            "sector": "log\u00edstica"
+        },
+        {
+            "id": "19378769000176",
+            "name": "INSTITUTO HERMES PARDINI S/A",
+            "sector": "sa\u00fade"
+        },
+        {
+            "id": "00609634000146",
+            "name": "CI&T SOFTWARE S/A",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "26314062000161",
+            "name": "SANKHYA S.A",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "05206246000138",
+            "name": "CONTAAZUL SOFTWARE LTDA",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "05314972000174",
+            "name": "VTEX BRASIL TECNOLOGIA PARA E-COMMERCE LTDA",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "18277493000177",
+            "name": "LOGGI TECNOLOGIA LTDA.",
+            "sector": "log\u00edstica"
+        },
+        {
+            "id": "29213298000108",
+            "name": "LOFT BRASIL TECNOLOGIA S.A",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "53113791000122",
+            "name": "TOTVS S.A.",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "58069360000120",
+            "name": "STEFANINI CONSULTORIA E ASSESSORIA EM INFORMATICA S.A.",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "13021784000186",
+            "name": "RD GESTAO E SISTEMAS S.A.",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "20504074000172",
+            "name": "PIPEFY MARKETING E TECNOLOGIA LTDA",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "23514668000152",
+            "name": "GUPY TECNOLOGIA EM RECRUTAMENTO LTDA",
+            "sector": "tecnologia"
+        },
+        {
+            "id": "10393366000121",
+            "name": "DESCOMPLICA TECNOLOGIA E EDUCACAO S.A.",
+            "sector": "educa\u00e7\u00e3o"
+        },
+        {
+            "id": "07526557000100",
+            "name": "AMBEV S.A.",
+            "sector": "ind\u00fastria"
+        }
+    ],
+    "kpis": [
+        {
+            "kpi": "turnover_voluntario",
+            "valor": 28.4,
+            "p25": 7.8,
+            "p50": 11,
+            "p75": 13,
+            "p90": 17,
+            "posicao": "p100",
+            "sinal": "bad"
+        },
+        {
+            "kpi": "absenteismo",
+            "valor": 5.2,
+            "p25": 2.2,
+            "p50": 2.6,
+            "p75": 3.3,
+            "p90": 3.5,
+            "posicao": "p100",
+            "sinal": "bad"
+        },
+        {
+            "kpi": "time_to_hire",
+            "valor": 32,
+            "p25": 30.9,
+            "p50": 47,
+            "p75": 57,
+            "p90": 64.2,
+            "posicao": "p30",
+            "sinal": "ok"
+        },
+        {
+            "kpi": "enps",
+            "valor": -5,
+            "p25": 32.2,
+            "p50": 39.5,
+            "p75": 50.2,
+            "p90": 54.2,
+            "posicao": "p0",
+            "sinal": "bad"
+        }
+    ],
+    "diagnostico": {
+        "diagnostico_principal": "Problema de reten\u00e7\u00e3o: a empresa perde gente em volume bem acima do cohort compar\u00e1vel.",
+        "indicadores_criticos": [
+            {
+                "kpi": "turnover_voluntario",
+                "leitura": "turnover_voluntario em 28.4 (p100 do cohort, mediana 11).",
+                "severidade": "alta"
+            },
+            {
+                "kpi": "absenteismo",
+                "leitura": "absenteismo em 5.2 (p100 do cohort, mediana 2.6).",
+                "severidade": "alta"
+            },
+            {
+                "kpi": "enps",
+                "leitura": "enps em -5 (p0 do cohort, mediana 39.5).",
+                "severidade": "alta"
+            }
+        ],
+        "hipoteses": [
+            "Onboarding ou primeiros meses de casa",
+            "Carga de trabalho ou clareza de carreira",
+            "Compensa\u00e7\u00e3o vs mercado regional"
+        ],
+        "proxima_acao": "Rodar pesquisa de sa\u00edda qualitativa nos \u00faltimos desligamentos volunt\u00e1rios e cruzar com engajamento por \u00e1rea."
+    }
+}

@@ -12,10 +12,15 @@ Each step lives on its own numbered branch `run/NN-slug`, chained off the previo
 (so `run/06-llm-as-judge` contains everything before it). Orchestrated by
 [`scripts/workshop-run.sh`](../scripts/workshop-run.sh).
 
-> **Reference-run caveat:** this run has no live Postgres/pgvector and no API keys, so it
-> uses **in-memory adapters and deterministic fakes** for the DB, embeddings, reranker and
-> LLM judge - everything runs with `node --test` anywhere. The real workshop swaps those
-> adapters behind the same ports; the pipeline logic built live is identical.
+> **Reference-run caveat (steps 00-07):** these steps have no live Postgres/pgvector and no API
+> keys, so they use **in-memory adapters and deterministic fakes** for the DB, embeddings,
+> reranker and LLM judge - everything runs with `node --test` anywhere. The real workshop swaps
+> those adapters behind the same ports; the pipeline logic built live is identical.
+>
+> **Step 08 closes that gap for the database:** it restores the real dump
+> (`db/tom-ranks.dump.sql`, 107 companies with real embeddings) into Postgres + pgvector and
+> swaps in `PgCompanyRepository` behind the same `CompanyRepository` port - proving the port
+> swap and catching a bug the fakes hid (see `08-postgres.md`).
 
 ## Steps
 
@@ -29,3 +34,4 @@ Each step lives on its own numbered branch `run/NN-slug`, chained off the previo
 | `run/05-percentis-k-anonimato` | percentiles + k-anonymity invariant | [docs](../docs/steps/04-percentis-k-anonimato.md) |
 | `run/06-llm-as-judge` | structured-output diagnosis | [docs](../docs/steps/05-llm-as-judge.md) |
 | `run/07-verificacao` | verification (app + MCP) | [docs](../docs/steps/06-verificacao-mcp.md) |
+| `run/08-postgres` | **real DB run**: pgvector dump + `PgCompanyRepository` (port swap) | [db/RESTORE.md](../db/RESTORE.md) |

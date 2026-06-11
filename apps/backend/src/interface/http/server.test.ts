@@ -18,8 +18,11 @@ test('GET /benchmark/solipse runs the pipeline and returns a diagnosis', async (
 
   assert.equal(response.statusCode, 200);
   const body = response.json();
-  assert.equal(body.empresa, 'Solípse Tecnologia');
+  // name varies by source (DB row "Solípse" vs seed "Solípse Tecnologia")
+  assert.match(body.empresa, /Solípse/);
   assert.ok(Array.isArray(body.cohort) && body.cohort.length >= 5);
+  // the client company is never in its own cohort
+  assert.ok(!body.cohort.some((c: { id: string }) => c.id === 'client-solipse'));
   assert.ok(body.diagnostico.diagnostico_principal.length > 0);
 
   await server.close();
