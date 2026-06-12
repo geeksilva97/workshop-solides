@@ -68,6 +68,45 @@ Cada rota protegida valida o token de sessão (`Authorization: Bearer …`, 401 
 
 Este repositório é o material de um workshop. Ele foi construído em **fatias verticais pequenas e versionadas** — uma branch `run/NN` por etapa, cada uma entregando algo testável de ponta a ponta. As seções abaixo reúnem o roteiro, os conceitos e o jeito de trabalhar.
 
+### Rodar o workshop com seu agente
+
+O ponto de partida é a branch **`workshop/scaffold`**: estrutura, contratos, frontend, API e persistência prontos; os **algoritmos do `@workshop/engine` ficam como `TODO`** e os testes começam vermelhos. Você implementa o cérebro — de preferência dirigindo um agente (Claude Code).
+
+**1. Clone e entre no scaffold**
+
+```bash
+git clone <repo> && cd workshop-solides
+git checkout workshop/scaffold
+docker compose up -d     # Postgres já sobe populado pelo db/dump.sql
+cp .env.example .env
+pnpm install
+```
+
+Tenha o [Ollama](https://ollama.com) rodando (`qwen3-embedding:0.6b` + `awenleven/Qwen3-Reranker-4B:Q4_K_M`). O roteiro detalhado dos passos vive em `docs/WORKSHOP.md` na branch.
+
+**2. Deixe o agente entender o terreno**
+
+Aponte-o para `docs/WORKSHOP.md` e para a suíte vermelha. Um primeiro prompt que funciona bem:
+
+> "Leia o `docs/WORKSHOP.md` e rode `pnpm --filter @workshop/engine test`. Liste os `TODO` do engine na ordem do worklist e me diga por onde começar."
+
+**3. Trabalhe um `TODO` por vez (loop)**
+
+> "Implemente o próximo `TODO` (`buildBm25Index` + `searchBm25` em `packages/engine/src/bm25.ts`) seguindo a fórmula no cabeçalho do arquivo. Rode os testes do engine até ficarem verdes. **Não altere os testes** — eles são o contrato."
+
+Repita descendo a tabela do worklist. Quando o engine inteiro fechar verde, os testes de pipeline da **api** passam junto (rodam o pipeline real sobre fakes).
+
+**4. Verifique de ponta a ponta**
+
+> "Suba `pnpm dev`, faça login com `ana@solides.com` / `solides123`, rode um benchmark e confirme que resultados, cohort, diagnóstico e tendências aparecem."
+
+**Dicas ao dirigir o agente**
+
+- Use **plan mode** para tarefas com várias etapas; deixe o agente explorar antes de editar.
+- Peça para ele **ler o cabeçalho de cada arquivo** (a fórmula/contrato está lá) antes de implementar.
+- Exija `pnpm test` + `pnpm typecheck` verdes **antes de cada commit** — e que ele **não toque nos testes** para "passar".
+- Uma fatia por commit/PR, como nas branches `run/NN`.
+
 ### Roteiro (como foi construído)
 
 | Etapa | Branch | Entrega |
