@@ -7,3 +7,6 @@ export * from "./percentiles.ts";
 export * from "./indicators.ts";
 export * from "./report.ts";
 export * from "./data/companies.ts";
+export * from "./ports.ts";
+export * from "./adapters/ollama.ts";
+export * from "./fakes.ts";

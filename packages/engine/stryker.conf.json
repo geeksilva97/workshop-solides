@@ -4,7 +4,7 @@
   "commandRunner": {
     "command": "node --test"
   },
-  "mutate": ["src/**/*.ts", "!src/**/*.test.ts"],
+  "mutate": ["src/**/*.ts", "!src/**/*.test.ts", "!src/fakes.ts"],
   "reporters": ["progress", "clear-text"],
   "coverageAnalysis": "off",
   "concurrency": 4,
