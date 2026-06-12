@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -15,20 +16,7 @@ import { Field } from '../../components/ui/Field'
 import { Select } from '../../components/ui/Select'
 import { Spinner } from '../../components/ui/Spinner'
 import { ArrowRightIcon } from '../../components/ui/icons'
-import { useCompanies, useCreateBenchmark } from './queries'
-
-const SETORES = [
-  'Tecnologia / Software (J-62)',
-  'Serviços financeiros (K-64)',
-  'Saúde (Q-86)',
-  'Indústria (C)',
-]
-const PORTES = [
-  '100–500 colaboradores',
-  '50–100 colaboradores',
-  '500–1000 colaboradores',
-]
-const REGIOES = ['Sudeste', 'Sul', 'Nordeste', 'Centro-Oeste', 'Norte']
+import { useCatalog, useCompanies, useCreateBenchmark } from './queries'
 
 const DEFAULT_INDICATORS: NewBenchmarkInput['indicators'] = [
   'turnover_voluntario',
@@ -39,21 +27,44 @@ const DEFAULT_INDICATORS: NewBenchmarkInput['indicators'] = [
 
 export function NewBenchmarkPage() {
   const companies = useCompanies()
+  const catalog = useCatalog()
   const create = useCreateBenchmark()
   const navigate = useNavigate()
+
+  const setores = catalog.data?.setores ?? []
+  const portes = catalog.data?.portes ?? []
+  const regioes = catalog.data?.regioes ?? []
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<NewBenchmarkInput>({
     resolver: zodResolver(newBenchmarkSchema),
     defaultValues: {
-      companyId: 'solipse',
-      filters: { setor: SETORES[0], porte: PORTES[0], regiao: REGIOES[0] },
+      companyId: '',
+      filters: { setor: '', porte: '', regiao: '' },
       indicators: DEFAULT_INDICATORS,
     },
   })
+
+  // Seed the form with real options once companies + catalog have loaded.
+  const firstCompanyId = companies.data?.[0]?.id
+  useEffect(() => {
+    if (firstCompanyId === undefined || catalog.data === undefined) return
+    reset({
+      companyId: firstCompanyId,
+      filters: {
+        setor: catalog.data.setores[0] ?? '',
+        porte: catalog.data.portes[0] ?? '',
+        regiao: catalog.data.regioes[0] ?? '',
+      },
+      indicators: DEFAULT_INDICATORS,
+    })
+  }, [firstCompanyId, catalog.data, reset])
+
+  const ready = companies.data !== undefined && catalog.data !== undefined
 
   const onSubmit = handleSubmit((data) => {
     create.mutate(data, {
@@ -94,7 +105,7 @@ export function NewBenchmarkPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <Field label="Setor (CNAE)" htmlFor="setor">
               <Select id="setor" {...register('filters.setor')}>
-                {SETORES.map((s) => (
+                {setores.map((s) => (
                   <option key={s} value={s}>
                     {s}
                   </option>
@@ -103,7 +114,7 @@ export function NewBenchmarkPage() {
             </Field>
             <Field label="Porte (headcount)" htmlFor="porte">
               <Select id="porte" {...register('filters.porte')}>
-                {PORTES.map((p) => (
+                {portes.map((p) => (
                   <option key={p} value={p}>
                     {p}
                   </option>
@@ -112,7 +123,7 @@ export function NewBenchmarkPage() {
             </Field>
             <Field label="Região" htmlFor="regiao">
               <Select id="regiao" {...register('filters.regiao')}>
-                {REGIOES.map((r) => (
+                {regioes.map((r) => (
                   <option key={r} value={r}>
                     {r}
                   </option>
@@ -149,7 +160,7 @@ export function NewBenchmarkPage() {
         ) : null}
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg" disabled={create.isPending}>
+          <Button type="submit" size="lg" disabled={create.isPending || !ready}>
             {create.isPending ? (
               <Spinner className="size-4 border-on-primary/40 border-t-on-primary" />
             ) : null}

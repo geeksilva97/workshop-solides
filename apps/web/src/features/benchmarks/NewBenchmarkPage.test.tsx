@@ -19,6 +19,10 @@ describe('NewBenchmarkPage', () => {
       ),
     })
 
+    // Wait for the catalog + company options to load (the submit button is
+    // disabled until both arrive).
+    await screen.findByRole('option', { name: 'Tecnologia' })
+
     await user.click(screen.getByRole('button', { name: /rodar benchmark/i }))
 
     expect(await screen.findByText('Rodando o benchmark')).toBeInTheDocument()

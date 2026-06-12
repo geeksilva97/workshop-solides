@@ -1,6 +1,7 @@
 import type {
   Benchmark,
   BenchmarkSummary,
+  Catalog,
   Cohort,
   CohortCompany,
   CompanyOption,
@@ -8,6 +9,18 @@ import type {
   KpiResult,
   Trends,
 } from '@workshop/shared'
+
+export const catalog: Catalog = {
+  setores: [
+    'Tecnologia',
+    'Serviços financeiros',
+    'Saúde',
+    'Indústria',
+    'Varejo',
+  ],
+  portes: ['50–100', '100–500', '500–1000'],
+  regioes: ['Sudeste', 'Sul', 'Nordeste', 'Centro-Oeste', 'Norte'],
+}
 
 export const companies: CompanyOption[] = [
   {

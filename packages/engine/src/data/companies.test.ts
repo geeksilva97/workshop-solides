@@ -5,6 +5,7 @@ import {
   CLIENT_COMPANIES,
   CORPUS,
   CORPUS_SIZE,
+  catalogFromCorpus,
   companyOptions,
   findClientCompany,
   generateCorpus,
@@ -110,4 +111,19 @@ test("companyOptions exposes id, name and description for each client", () => {
     name: "Solípse Tecnologia",
     description: CLIENT_COMPANIES[0]!.description,
   });
+});
+
+test("catalogFromCorpus derives sorted, de-duplicated filter options", () => {
+  const catalog = catalogFromCorpus([
+    generateCorpus(1, 1)[0]!,
+    generateCorpus(1, 1)[0]!, // duplicate -> collapsed
+  ]);
+  assert.deepEqual(catalog.setores, ["Tecnologia"]);
+  assert.equal(new Set(catalog.portes).size, catalog.portes.length);
+
+  const full = catalogFromCorpus();
+  assert.equal(full.setores.length, 7); // every sector
+  // sorted ascending (pt-BR)
+  assert.deepEqual(full.setores, [...full.setores].sort((a, b) => a.localeCompare(b, "pt-BR")));
+  assert.ok(full.regioes.includes("Sudeste"));
 });

@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -7,6 +8,7 @@ import {
 import { Navigate, useLocation } from 'react-router-dom'
 import type { Session } from '@workshop/shared'
 import { AuthContext, type AuthContextValue } from './authContext'
+import { setAuthToken, setUnauthorizedHandler } from './apiClient'
 import { useAuth } from './useAuth'
 
 const STORAGE_KEY = 'solides-run.session'
@@ -26,17 +28,30 @@ function loadSession(): Session | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(loadSession)
+  // Prime the api client with the stored token before any child query fires.
+  const [session, setSession] = useState<Session | null>(() => {
+    const stored = loadSession()
+    setAuthToken(stored?.token ?? null)
+    return stored
+  })
 
   const signIn = useCallback((next: Session) => {
     storage()?.setItem(STORAGE_KEY, JSON.stringify(next))
+    setAuthToken(next.token)
     setSession(next)
   }, [])
 
   const signOut = useCallback(() => {
     storage()?.removeItem(STORAGE_KEY)
+    setAuthToken(null)
     setSession(null)
   }, [])
+
+  // Sign out (and bounce to /login) whenever the API reports an expired session.
+  useEffect(() => {
+    setUnauthorizedHandler(signOut)
+    return () => setUnauthorizedHandler(null)
+  }, [signOut])
 
   const value = useMemo<AuthContextValue>(
     () => ({

@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import {
   benchmarkListSchema,
   benchmarkSchema,
+  catalogSchema,
   companyOptionSchema,
   cohortSchema,
   diagnosticSchema,
@@ -18,6 +19,7 @@ import { z } from 'zod'
 import {
   canonicalDiagnostic,
   canonicalTrends,
+  catalog,
   companies,
   summarize,
 } from './data'
@@ -71,6 +73,8 @@ export const handlers = [
   http.get('/api/companies', () =>
     json(z.array(companyOptionSchema), companies),
   ),
+
+  http.get('/api/catalogs', () => json(catalogSchema, catalog)),
 
   // --- Benchmarks ---
   http.get('/api/benchmarks', () =>

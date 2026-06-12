@@ -7,4 +7,9 @@ reports/
 *.log
 .env
 .env.*
+!.env.example
 .DS_Store
+
+# Playwright MCP scratch + intermediate journey frames (final video lives in docs/)
+.playwright-mcp/
+frames/

@@ -6,7 +6,7 @@
  * (for BM25 + embeddings) and the seven tracked indicators. A small set of
  * fixed client companies are the benchmark targets the UI lets you pick.
  */
-import type { CompanyOption, Indicator } from "@workshop/shared";
+import type { Catalog, CompanyOption, Indicator } from "@workshop/shared";
 
 export interface CompanyRecord {
   readonly id: string;
@@ -223,3 +223,19 @@ export const companyOptions = (): CompanyOption[] =>
     name: c.name,
     description: c.description,
   }));
+
+const sortedUnique = (values: readonly string[]): string[] =>
+  [...new Set(values)].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+/**
+ * Distinct cohort-filter options drawn from a corpus. Using the corpus values
+ * (rather than hand-written labels) guarantees the pipeline's sector filter
+ * always matches what the form offers.
+ */
+export const catalogFromCorpus = (
+  corpus: readonly CompanyRecord[] = CORPUS,
+): Catalog => ({
+  setores: sortedUnique(corpus.map((c) => c.setor)),
+  portes: sortedUnique(corpus.map((c) => c.porte)),
+  regioes: sortedUnique(corpus.map((c) => c.regiao)),
+});

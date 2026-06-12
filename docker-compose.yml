@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: solides-postgres
+    environment:
+      POSTGRES_USER: solides
+      POSTGRES_PASSWORD: solides
+      POSTGRES_DB: solides
+    ports:
+      - "5432:5432"
+    volumes:
+      - solides-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solides -d solides"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  solides-pgdata:
