@@ -5,3 +5,4 @@ export * from "./vector.ts";
 export * from "./rrf.ts";
 export * from "./percentiles.ts";
 export * from "./indicators.ts";
+export * from "./report.ts";
