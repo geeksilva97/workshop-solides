@@ -14,6 +14,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@workshop/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
       '@workshop/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -27,6 +30,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   apps/web:
     dependencies:

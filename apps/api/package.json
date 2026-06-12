@@ -10,11 +10,13 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@workshop/engine": "workspace:*",
     "@workshop/shared": "workspace:*",
     "fastify": "^5.8.5"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
   }
 }
