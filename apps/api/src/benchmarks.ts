@@ -15,6 +15,9 @@ import type {
   Diagnostic,
   NewBenchmarkInput,
   PipelineStatus,
+  TrendDirection,
+  TrendIndicator,
+  Trends,
 } from "@workshop/shared";
 import {
   CLIENT_COMPANIES,
@@ -52,6 +55,43 @@ interface Entry {
 const cohortLabel = (input: NewBenchmarkInput): string =>
   `${input.filters.setor} · ${input.filters.porte} · ${input.filters.regiao}`;
 
+const STATUS_TEXT: Record<TrendDirection, string> = {
+  up: "Subiu vs. o período anterior",
+  down: "Caiu vs. o período anterior",
+  stable: "Estável vs. o período anterior",
+};
+
+/**
+ * Derive a two-period trend view from a finished benchmark. There is no real
+ * history yet, so the prior period is synthesized deterministically from the
+ * current percentile (one notch better), purely to populate the screen.
+ */
+export const buildTrends = (benchmark: Benchmark): Trends => {
+  const indicators: TrendIndicator[] = benchmark.kpis.map((kpi) => {
+    const currentPercentile = kpi.percentile;
+    const priorPercentile = Math.max(0, currentPercentile - 7);
+    const direction: TrendDirection =
+      currentPercentile > priorPercentile
+        ? "up"
+        : currentPercentile < priorPercentile
+          ? "down"
+          : "stable";
+    return {
+      label: kpi.label,
+      currentPercentile,
+      priorPercentile,
+      severity: kpi.status,
+      statusText: STATUS_TEXT[direction],
+      direction,
+    };
+  });
+  return {
+    benchmarkId: benchmark.id,
+    periods: ["Período anterior", "Período atual"],
+    indicators,
+  };
+};
+
 export interface BenchmarkService {
   listCompanies(): CompanyOption[];
   listBenchmarks(): BenchmarkSummary[];
@@ -60,6 +100,7 @@ export interface BenchmarkService {
   getBenchmark(id: string): Benchmark | undefined;
   getCohort(id: string): Cohort | undefined;
   getDiagnostic(id: string): Diagnostic | undefined;
+  getTrends(id: string): Trends | undefined;
   /** Resolves when the benchmark's background run settles (for tests). */
   waitFor(id: string): Promise<void> | undefined;
 }
@@ -160,6 +201,10 @@ export const createBenchmarkService = (
     getBenchmark: (id) => entries.get(id)?.benchmark,
     getCohort: (id) => entries.get(id)?.benchmark?.cohort,
     getDiagnostic: (id) => entries.get(id)?.diagnostic,
+    getTrends: (id) => {
+      const benchmark = entries.get(id)?.benchmark;
+      return benchmark === undefined ? undefined : buildTrends(benchmark);
+    },
     waitFor: (id) => entries.get(id)?.completion,
   };
 };

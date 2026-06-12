@@ -1,26 +1,78 @@
 import Fastify from "fastify";
-import { type HelloResponse, newBenchmarkSchema } from "@workshop/shared";
+import {
+  type HelloResponse,
+  newBenchmarkSchema,
+  resetPasswordSchema,
+  signInSchema,
+  signUpSchema,
+} from "@workshop/shared";
 import {
   type BenchmarkService,
   type BenchmarkServiceDeps,
   UnknownCompanyError,
   createBenchmarkService,
 } from "./benchmarks.ts";
+import {
+  type AuthService,
+  EmailTakenError,
+  InvalidCredentialsError,
+  createAuthService,
+} from "./auth.ts";
 
 export interface BuildAppOptions extends BenchmarkServiceDeps {
   /** Provide a pre-built service (tests); otherwise one is created from deps. */
   readonly service?: BenchmarkService;
+  readonly authService?: AuthService;
 }
 
 export function buildApp(options: BuildAppOptions = {}) {
   const app = Fastify({ logger: true });
   const service = options.service ?? createBenchmarkService(options);
+  const auth = options.authService ?? createAuthService();
 
   // Exposed for tests to await a benchmark's background run.
   app.decorate("benchmarks", service);
 
   app.get("/api/hello", async (): Promise<HelloResponse> => {
     return { message: "Hello from Fastify!" };
+  });
+
+  app.post("/api/auth/login", async (request, reply) => {
+    const parsed = signInSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "Payload inválido", issues: parsed.error.issues });
+    }
+    try {
+      return auth.login(parsed.data);
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        return reply.code(401).send({ error: error.message });
+      }
+      throw error;
+    }
+  });
+
+  app.post("/api/auth/signup", async (request, reply) => {
+    const parsed = signUpSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "Payload inválido", issues: parsed.error.issues });
+    }
+    try {
+      return reply.code(201).send(auth.signup(parsed.data));
+    } catch (error) {
+      if (error instanceof EmailTakenError) {
+        return reply.code(409).send({ error: error.message });
+      }
+      throw error;
+    }
+  });
+
+  app.post("/api/auth/reset", async (request, reply) => {
+    const parsed = resetPasswordSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "Payload inválido", issues: parsed.error.issues });
+    }
+    return auth.reset(parsed.data);
   });
 
   app.get("/api/companies", async () => service.listCompanies());
@@ -76,6 +128,15 @@ export function buildApp(options: BuildAppOptions = {}) {
       return reply.code(404).send({ error: "Diagnóstico não disponível" });
     }
     return diagnostic;
+  });
+
+  app.get("/api/benchmarks/:id/trends", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const trends = service.getTrends(id);
+    if (trends === undefined) {
+      return reply.code(404).send({ error: "Tendências não disponíveis" });
+    }
+    return trends;
   });
 
   return app;

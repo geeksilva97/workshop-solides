@@ -10,6 +10,7 @@ import {
   helloResponseSchema,
   type NewBenchmarkInput,
   pipelineStatusSchema,
+  trendsSchema,
 } from "@workshop/shared";
 import { createFakeEmbedder, createFakeReranker } from "@workshop/engine";
 import { buildApp } from "./app.ts";
@@ -139,6 +140,23 @@ test("GET /api/benchmarks/:id/diagnostic returns a valid diagnostic", async () =
   assert.equal(response.statusCode, 200);
   const diagnostic = diagnosticSchema.parse(response.json());
   assert.equal(diagnostic.benchmarkId, id);
+});
+
+test("GET /api/benchmarks/:id/trends returns a valid trend view", async () => {
+  const { app, service } = buildTestApp();
+  const id = await createAndFinish(app, service);
+  const response = await app.inject({ method: "GET", url: `/api/benchmarks/${id}/trends` });
+  assert.equal(response.statusCode, 200);
+  const trends = trendsSchema.parse(response.json());
+  assert.equal(trends.benchmarkId, id);
+  assert.equal(trends.periods.length, 2);
+  assert.equal(trends.indicators.length, validInput.indicators.length);
+});
+
+test("GET /api/benchmarks/:id/trends is 404 when the benchmark is unknown", async () => {
+  const { app } = buildTestApp();
+  const response = await app.inject({ method: "GET", url: "/api/benchmarks/missing/trends" });
+  assert.equal(response.statusCode, 404);
 });
 
 test("GET /api/benchmarks lists prior runs", async () => {
