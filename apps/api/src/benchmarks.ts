@@ -114,6 +114,9 @@ export const createBenchmarkService = (
   const clients = deps.clientCompanies ?? CLIENT_COMPANIES;
   const now = deps.now ?? (() => new Date().toISOString());
   const idFactory = deps.idFactory ?? (() => randomUUID());
+  // Optional progress pacing so the live progress UI is visible on machines
+  // where the pipeline finishes in well under a second. Off (0) by default.
+  const stageDelayMs = Number(process.env.PIPELINE_STAGE_DELAY_MS ?? 0);
 
   const entries = new Map<string, Entry>();
 
@@ -161,6 +164,7 @@ export const createBenchmarkService = (
       embedder,
       reranker,
       createdAt,
+      options: { stageDelayMs },
       onProgress: (status) => {
         entry.status = status;
       },

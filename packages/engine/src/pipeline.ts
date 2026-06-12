@@ -37,6 +37,13 @@ export interface PipelineOptions {
   readonly bm25TopN: number;
   readonly rerankTopN: number;
   readonly cohortSize: number;
+  /**
+   * Optional pause (ms) after each stage's progress is emitted. Does not touch
+   * the computation — it only spaces out the progress updates so the live
+   * progress UI is observable on machines where the pipeline finishes in well
+   * under a second. Defaults to 0 (no pacing).
+   */
+  readonly stageDelayMs: number;
 }
 
 export const DEFAULT_PIPELINE_OPTIONS: PipelineOptions = {
@@ -44,7 +51,11 @@ export const DEFAULT_PIPELINE_OPTIONS: PipelineOptions = {
   bm25TopN: 50,
   rerankTopN: 20,
   cohortSize: 10,
+  stageDelayMs: 0,
 };
+
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 export interface RunBenchmarkInput {
   readonly benchmarkId: string;
@@ -103,13 +114,26 @@ const cohortValues = (
   indicator: Indicator,
 ): number[] => cohort.map((company) => company.indicators[indicator]);
 
+/**
+ * Whether a corpus company's sector matches the requested filter. The UI sends
+ * CNAE-labelled values ("Tecnologia / Software (J-62)") while the corpus stores
+ * the bare sector ("Tecnologia"), so we accept an exact match or the corpus
+ * sector being contained in the filter label.
+ */
+export const setorMatches = (
+  filterSetor: string,
+  companySetor: string,
+): boolean =>
+  filterSetor === companySetor ||
+  filterSetor.toLowerCase().includes(companySetor.toLowerCase());
+
 /** Restrict the corpus to the requested sector when that still leaves a cohort. */
 const candidatePool = (
   corpus: readonly CompanyRecord[],
   filters: CohortFilters,
   cohortSize: number,
 ): readonly CompanyRecord[] => {
-  const sameSector = corpus.filter((c) => c.setor === filters.setor);
+  const sameSector = corpus.filter((c) => setorMatches(filters.setor, c.setor));
   return sameSector.length >= cohortSize ? sameSector : corpus;
 };
 
@@ -118,7 +142,11 @@ export const runBenchmark = async (
   input: RunBenchmarkInput,
 ): Promise<RunBenchmarkResult> => {
   const options = { ...DEFAULT_PIPELINE_OPTIONS, ...input.options };
-  const emit = (activeIndex: number, message: string, done = false): void => {
+  const emit = async (
+    activeIndex: number,
+    message: string,
+    done = false,
+  ): Promise<void> => {
     input.onProgress?.({
       benchmarkId: input.benchmarkId,
       percent: progressPercent(activeIndex, done),
@@ -126,16 +154,17 @@ export const runBenchmark = async (
       done,
       steps: buildSteps(activeIndex, done),
     });
+    if (!done && options.stageDelayMs > 0) await sleep(options.stageDelayMs);
   };
 
   // 1. Ingestão
-  emit(0, "Validando perfil e montando a consulta");
+  await emit(0, "Validando perfil e montando a consulta");
   const pool = candidatePool(input.corpus, input.filters, options.cohortSize);
   const query = buildQuery(input.client, input.filters);
   const byId = new Map(pool.map((company) => [company.id, company]));
 
   // 2. Dense retrieval
-  emit(1, "Gerando embeddings e buscando por similaridade");
+  await emit(1, "Gerando embeddings e buscando por similaridade");
   const vectors = await input.embedder.embed([
     query,
     ...pool.map((company) => company.description),
@@ -154,7 +183,7 @@ export const runBenchmark = async (
   };
 
   // 3. BM25
-  emit(2, "Busca léxica BM25");
+  await emit(2, "Busca léxica BM25");
   const index = buildBm25Index(
     pool.map((company) => ({ id: company.id, text: company.description })),
   );
@@ -167,13 +196,13 @@ export const runBenchmark = async (
   };
 
   // 4. RRF
-  emit(3, "Fundindo rankings (RRF)");
+  await emit(3, "Fundindo rankings (RRF)");
   const fused = reciprocalRankFusion([denseList, bm25List]);
   const sourcesById = new Map(fused.map((d) => [d.id, d.sources]));
   const rerankCandidates = fused.slice(0, options.rerankTopN);
 
   // 5. Reranker
-  emit(4, "Reordenando com o reranker");
+  await emit(4, "Reordenando com o reranker");
   const reranked = await input.reranker.rerank(
     query,
     rerankCandidates.map((d) => ({ id: d.id, text: byId.get(d.id)!.description })),
@@ -183,7 +212,7 @@ export const runBenchmark = async (
   const cohortRecords = cohortScored.map((d) => byId.get(d.id)!);
 
   // 6. Percentis
-  emit(5, "Calculando percentis vs. cohort");
+  await emit(5, "Calculando percentis vs. cohort");
   const companies: CohortCompany[] = cohortScored.map((scored, position) => {
     const record = byId.get(scored.id)!;
     return {
@@ -217,7 +246,7 @@ export const runBenchmark = async (
   const kpis: KpiResult[] = measurements.map(buildKpiResult);
 
   // 7. Diagnóstico
-  emit(6, "Gerando diagnóstico");
+  await emit(6, "Gerando diagnóstico");
   const diagnostic = buildDiagnostic({
     benchmarkId: input.benchmarkId,
     companyName: input.client.name,
@@ -225,7 +254,7 @@ export const runBenchmark = async (
     updatedAt: input.createdAt,
   });
 
-  emit(STAGES.length, "Benchmark concluído", true);
+  await emit(STAGES.length, "Benchmark concluído", true);
 
   const benchmark: Benchmark = {
     id: input.benchmarkId,

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -45,15 +46,23 @@ export function NewBenchmarkPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<NewBenchmarkInput>({
     resolver: zodResolver(newBenchmarkSchema),
     defaultValues: {
-      companyId: 'solipse',
+      companyId: '',
       filters: { setor: SETORES[0], porte: PORTES[0], regiao: REGIOES[0] },
       indicators: DEFAULT_INDICATORS,
     },
   })
+
+  // Default to the first company once the list loads, so the selected option
+  // and the submitted companyId always agree (works for real API and mocks).
+  const firstCompanyId = companies.data?.[0]?.id
+  useEffect(() => {
+    if (firstCompanyId) setValue('companyId', firstCompanyId)
+  }, [firstCompanyId, setValue])
 
   const onSubmit = handleSubmit((data) => {
     create.mutate(data, {

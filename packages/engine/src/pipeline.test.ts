@@ -15,6 +15,7 @@ import {
   originFromSources,
   progressPercent,
   runBenchmark,
+  setorMatches,
 } from "./pipeline.ts";
 
 const ALL_INDICATORS = [
@@ -54,6 +55,13 @@ test("buildQuery combines the client profile with the filters", () => {
   assert.ok(query.includes("Setor Tecnologia"));
   assert.ok(query.includes("porte 100–500"));
   assert.ok(query.includes("região Sudeste"));
+});
+
+test("setorMatches accepts exact and CNAE-labelled sectors", () => {
+  assert.equal(setorMatches("Tecnologia", "Tecnologia"), true);
+  assert.equal(setorMatches("Tecnologia / Software (J-62)", "Tecnologia"), true);
+  assert.equal(setorMatches("Saúde (Q-86)", "Saúde"), true);
+  assert.equal(setorMatches("Indústria (C)", "Tecnologia"), false);
 });
 
 test("originFromSources maps retrieval arms to the cohort origin", () => {
