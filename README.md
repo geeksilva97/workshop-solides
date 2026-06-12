@@ -10,7 +10,7 @@ Login → criar benchmark → pipeline → resultados → cohort → diagnóstic
 
 ![Solides Run — jornada completa](docs/journey.gif)
 
-> Versão em vídeo (melhor qualidade): [`docs/journey.mp4`](docs/journey.mp4). Gravada dirigindo o app real (Vite + Fastify + PostgreSQL + Ollama) via Playwright.
+> Versão em vídeo (melhor qualidade): [`docs/journey.mp4`](docs/journey.mp4). Screencast contínuo gravado dirigindo o app real (Vite + Fastify + PostgreSQL + Ollama) com o `recordVideo` do Playwright — regenere com `pnpm record:journey` (precisa de `ffmpeg` e dos servidores no ar).
 
 ## Stack
 

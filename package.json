@@ -6,9 +6,11 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "record:journey": "node scripts/record-journey.mjs"
   },
   "devDependencies": {
+    "playwright": "^1.60.0",
     "turbo": "^2.9.18"
   }
 }
