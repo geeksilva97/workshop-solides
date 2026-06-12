@@ -10,3 +10,4 @@ export * from "./data/companies.ts";
 export * from "./ports.ts";
 export * from "./adapters/ollama.ts";
 export * from "./fakes.ts";
+export * from "./pipeline.ts";
