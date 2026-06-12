@@ -3,15 +3,14 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { resetPasswordSchema, type ResetPasswordInput } from '@workshop/shared'
 import { Button } from '../../components/ui/Button'
-import { Card } from '../../components/ui/Card'
 import { Field } from '../../components/ui/Field'
 import { Input } from '../../components/ui/Input'
 import { Spinner } from '../../components/ui/Spinner'
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  AtSignIcon,
   CheckIcon,
-  MailIcon,
 } from '../../components/ui/icons'
 import { useResetPassword } from './queries'
 
@@ -27,11 +26,13 @@ export function ResetPasswordPage() {
 
   if (reset.isSuccess) {
     return (
-      <Card className="p-8 text-center">
+      <div className="text-center">
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-success-tint text-success">
           <CheckIcon />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-heading">Verifique seu e-mail</h1>
+        <h1 className="mt-4 text-2xl font-bold text-heading">
+          Verifique seu e-mail
+        </h1>
         <p className="mt-2 text-sm text-body">{reset.data.message}</p>
         <Link
           to="/login"
@@ -40,18 +41,20 @@ export function ResetPasswordPage() {
           <ArrowLeftIcon className="size-[18px]" />
           Voltar para o login
         </Link>
-      </Card>
+      </div>
     )
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight text-heading">
-        Recuperar senha
-      </h1>
-      <p className="mt-2 text-sm text-body">
-        Insira seu e-mail para receber um link de redefinição.
-      </p>
+      <div className="text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-heading">
+          Recuperar senha
+        </h1>
+        <p className="mt-2 text-sm text-body">
+          Insira seu e-mail para receber um link de redefinição.
+        </p>
+      </div>
 
       <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-5" noValidate>
         <Field label="E-mail" htmlFor="email" error={errors.email?.message}>
@@ -59,15 +62,17 @@ export function ResetPasswordPage() {
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="voce@empresa.com"
-            icon={<MailIcon className="size-[18px]" />}
+            placeholder="nome@empresa.com.br"
+            icon={<AtSignIcon className="size-[18px]" />}
             invalid={!!errors.email}
             {...register('email')}
           />
         </Field>
 
         <Button type="submit" size="lg" disabled={reset.isPending}>
-          {reset.isPending ? <Spinner className="size-4 border-on-primary/40 border-t-on-primary" /> : null}
+          {reset.isPending ? (
+            <Spinner className="size-4 border-on-primary/40 border-t-on-primary" />
+          ) : null}
           Enviar link
           <ArrowRightIcon className="size-[18px]" />
         </Button>
@@ -75,7 +80,7 @@ export function ResetPasswordPage() {
 
       <Link
         to="/login"
-        className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+        className="mt-8 inline-flex items-center justify-center gap-2 text-sm font-semibold text-primary hover:underline"
       >
         <ArrowLeftIcon className="size-[18px]" />
         Voltar para o login

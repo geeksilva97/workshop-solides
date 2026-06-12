@@ -5,13 +5,9 @@ import { signUpSchema, type SignUpInput } from '@workshop/shared'
 import { Button } from '../../components/ui/Button'
 import { Field } from '../../components/ui/Field'
 import { Input } from '../../components/ui/Input'
+import { PasswordInput } from '../../components/ui/PasswordInput'
 import { Spinner } from '../../components/ui/Spinner'
-import {
-  ArrowRightIcon,
-  LockIcon,
-  MailIcon,
-  UserIcon,
-} from '../../components/ui/icons'
+import { ArrowRightIcon, AtSignIcon, UserIcon } from '../../components/ui/icons'
 import { useAuth } from '../../lib/useAuth'
 import { useSignup } from './queries'
 
@@ -37,12 +33,14 @@ export function SignUpPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight text-heading">
-        Criar conta
-      </h1>
-      <p className="mt-2 text-sm text-body">
-        Plataforma de benchmark de RH.
-      </p>
+      <div className="text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-heading">
+          Criar conta
+        </h1>
+        <p className="mt-2 text-sm text-body">
+          Plataforma de benchmark de RH.
+        </p>
+      </div>
 
       <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-5" noValidate>
         <Field label="Nome completo" htmlFor="name" error={errors.name?.message}>
@@ -61,20 +59,18 @@ export function SignUpPage() {
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="voce@empresa.com"
-            icon={<MailIcon className="size-[18px]" />}
+            placeholder="nome@empresa.com.br"
+            icon={<AtSignIcon className="size-[18px]" />}
             invalid={!!errors.email}
             {...register('email')}
           />
         </Field>
 
         <Field label="Senha" htmlFor="password" error={errors.password?.message}>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="new-password"
             placeholder="Mínimo de 8 caracteres"
-            icon={<LockIcon className="size-[18px]" />}
             invalid={!!errors.password}
             {...register('password')}
           />
@@ -87,14 +83,16 @@ export function SignUpPage() {
         ) : null}
 
         <Button type="submit" size="lg" disabled={signup.isPending}>
-          {signup.isPending ? <Spinner className="size-4 border-on-primary/40 border-t-on-primary" /> : null}
+          {signup.isPending ? (
+            <Spinner className="size-4 border-on-primary/40 border-t-on-primary" />
+          ) : null}
           Criar minha conta
           <ArrowRightIcon className="size-[18px]" />
         </Button>
       </form>
 
       <p className="mt-8 text-center text-sm text-body">
-        Já tem conta?{' '}
+        Já tem uma conta?{' '}
         <Link to="/login" className="font-semibold text-primary hover:underline">
           Entrar
         </Link>
