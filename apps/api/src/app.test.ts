@@ -1,15 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { test } from "node:test";
+import assert from "node:assert/strict";
 import { helloResponseSchema } from "@workshop/shared";
-import { buildApp } from "./app.js";
+import { buildApp } from "./app.ts";
 
-describe("GET /api/hello", () => {
-  it("returns a valid hello response", async () => {
-    const app = buildApp();
+test("GET /api/hello returns a valid hello response", async () => {
+  const app = buildApp();
 
-    const response = await app.inject({ method: "GET", url: "/api/hello" });
+  const response = await app.inject({ method: "GET", url: "/api/hello" });
 
-    expect(response.statusCode).toBe(200);
-    const body = helloResponseSchema.parse(response.json());
-    expect(body.message).toBe("Hello from Fastify!");
-  });
+  assert.equal(response.statusCode, 200);
+  const body = helloResponseSchema.parse(response.json());
+  assert.equal(body.message, "Hello from Fastify!");
 });
