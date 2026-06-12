@@ -25,6 +25,8 @@ const STOPWORDS = new Set(
   ),
 );
 
+import type { ScoredDoc } from "./types.ts";
+
 export interface Bm25Doc {
   readonly id: string;
   readonly text: string;
@@ -43,11 +45,6 @@ export interface Bm25Index {
   readonly avgdl: number;
   readonly k1: number;
   readonly b: number;
-}
-
-export interface ScoredDoc {
-  readonly id: string;
-  readonly score: number;
 }
 
 /** Lowercase, strip accents and punctuation, split on whitespace, drop stopwords. */
