@@ -43,9 +43,9 @@ export const cosineSimilarity = (
   a: readonly number[],
   b: readonly number[],
 ): number => {
-  const denominator = magnitude(a) * magnitude(b);
-  if (denominator === 0) return 0;
-  return dot(a, b) / denominator;
+  // TODO (run/02): cosseno = dot(a,b) / (|a|·|b|); devolva 0 se algum vetor é nulo.
+  // Dica: use `dot` e `magnitude`.
+  throw new Error("TODO: implemente cosineSimilarity — ver docs/WORKSHOP.md");
 };
 
 /**
@@ -56,10 +56,6 @@ export const denseRank = (
   query: readonly number[],
   docs: readonly EmbeddedDoc[],
 ): ScoredDoc[] => {
-  const scored = docs.map((doc) => ({
-    id: doc.id,
-    score: cosineSimilarity(query, doc.embedding),
-  }));
-  scored.sort((left, right) => right.score - left.score);
-  return scored;
+  // TODO (run/02): ranqueie os docs por similaridade de cosseno (maior primeiro).
+  throw new Error("TODO: implemente denseRank — ver docs/WORKSHOP.md");
 };

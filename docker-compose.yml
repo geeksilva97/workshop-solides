@@ -10,6 +10,9 @@ services:
       - "5432:5432"
     volumes:
       - solides-pgdata:/var/lib/postgresql/data
+      # Carregado automaticamente na primeira subida de um volume vazio:
+      # schema + dados de referência (empresas + contas demo).
+      - ./db/dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U solides -d solides"]
       interval: 5s

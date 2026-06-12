@@ -22,15 +22,9 @@ const sortedAscending = (values: readonly number[]): number[] =>
  * method) for `q` in [0, 1]. `values` need not be pre-sorted.
  */
 export const quantile = (values: readonly number[], q: number): number => {
-  if (values.length === 0) {
-    throw new Error("cannot compute a quantile of an empty set");
-  }
-  const sorted = sortedAscending(values);
-  const rank = q * (sorted.length - 1);
-  const lower = Math.floor(rank);
-  const upper = Math.ceil(rank);
-  const fraction = rank - lower;
-  return sorted[lower]! + fraction * (sorted[upper]! - sorted[lower]!);
+  // TODO (run/04-percentis): quantil por interpolação linear (tipo 7 /
+  // PERCENTILE.INC) para q em [0,1]. Dica: ordene e interpole entre os vizinhos.
+  throw new Error("TODO: implemente quantile — ver docs/WORKSHOP.md");
 };
 
 /** The p25/p50/p75/p90 cut points of a cohort. */
@@ -49,14 +43,9 @@ export const percentileOf = (
   value: number,
   cohort: readonly number[],
 ): number => {
-  if (cohort.length === 0) {
-    throw new Error("cannot position a value against an empty cohort");
-  }
-  let atOrBelow = 0;
-  for (const sample of cohort) {
-    if (sample <= value) atOrBelow++;
-  }
-  return Math.round((100 * atOrBelow) / cohort.length);
+  // TODO (run/04-percentis): ECDF — proporção do cohort <= value, em 0–100
+  // (inteiro arredondado).
+  throw new Error("TODO: implemente percentileOf — ver docs/WORKSHOP.md");
 };
 
 /** Whether a cohort is large enough to report without re-identification risk. */

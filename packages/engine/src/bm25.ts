@@ -76,26 +76,10 @@ export const buildBm25Index = (
   docs: readonly Bm25Doc[],
   options: { k1?: number; b?: number } = {},
 ): Bm25Index => {
-  const k1 = options.k1 ?? BM25_K1;
-  const b = options.b ?? BM25_B;
-
-  const indexed: IndexedDoc[] = [];
-  const df = new Map<string, number>();
-  let totalLength = 0;
-
-  for (const doc of docs) {
-    const tokens = tokenize(doc.text);
-    const tf = countTerms(tokens);
-    totalLength += tokens.length;
-    for (const term of tf.keys()) {
-      df.set(term, (df.get(term) ?? 0) + 1);
-    }
-    indexed.push({ id: doc.id, length: tokens.length, tf });
-  }
-
-  const n = indexed.length;
-  const avgdl = n === 0 ? 0 : totalLength / n;
-  return { docs: indexed, df, n, avgdl, k1, b };
+  // TODO (run/02-bm25): construa as estatísticas BM25 do corpus — tf por doc,
+  // df por termo, comprimento de cada doc e avgdl. Dica: use `tokenize` +
+  // `countTerms`. Veja a fórmula no cabeçalho do arquivo.
+  throw new Error("TODO: implemente buildBm25Index — ver docs/WORKSHOP.md");
 };
 
 /** Inverse document frequency of a term in the index. */
@@ -126,11 +110,7 @@ const scoreDoc = (
  * score. Documents with no query-term overlap score 0 and sort last.
  */
 export const searchBm25 = (index: Bm25Index, query: string): ScoredDoc[] => {
-  const queryTerms = tokenize(query);
-  const scored = index.docs.map((doc) => ({
-    id: doc.id,
-    score: scoreDoc(index, queryTerms, doc),
-  }));
-  scored.sort((left, right) => right.score - left.score);
-  return scored;
+  // TODO (run/02-bm25): pontue cada documento contra a query (use `scoreDoc`)
+  // e devolva ordenado por score decrescente.
+  throw new Error("TODO: implemente searchBm25 — ver docs/WORKSHOP.md");
 };

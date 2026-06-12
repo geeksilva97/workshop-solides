@@ -90,32 +90,11 @@ export interface DiagnosticInput {
 
 /** Build the deterministic diagnosis from measured indicators. */
 export const buildDiagnostic = (input: DiagnosticInput): Diagnostic => {
-  const entries = input.measurements.map((measurement) => {
-    const indicator = buildCriticalIndicator(measurement);
-    const concern = concernPercentile(measurement.indicator, indicator.percentile);
-    return { measurement, indicator, concern };
-  });
-  entries.sort((left, right) => right.concern - left.concern);
-
-  const critical = entries.filter((e) => e.indicator.status !== "saudavel");
-  const total = input.measurements.length;
-
-  const hypotheses: Hypothesis[] = critical
-    .slice(0, MAX_HYPOTHESES)
-    .map((e, index) => ({
-      order: index + 1,
-      ...INDICATOR_HYPOTHESES[e.measurement.indicator],
-    }));
-
-  return {
-    benchmarkId: input.benchmarkId,
-    headline: buildHeadline(input.companyName, critical.length, total),
-    summary: buildSummary(critical.map((e) => e.indicator), total),
-    indicators: critical.map((e) => e.indicator),
-    hypotheses,
-    nextAction: { ...NEXT_ACTION },
-    updatedAt: input.updatedAt,
-  };
+  // TODO (run/05/06-diagnóstico): a partir das measurements, ordene por "concern"
+  // (pior primeiro), separe os indicadores críticos (status !== "saudavel"), e
+  // monte o Diagnostic: headline + summary (use os helpers abaixo), indicadores
+  // críticos, até MAX_HYPOTHESES hipóteses (INDICATOR_HYPOTHESES) e NEXT_ACTION.
+  throw new Error("TODO: implemente buildDiagnostic — ver docs/WORKSHOP.md");
 };
 
 const buildHeadline = (

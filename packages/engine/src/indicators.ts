@@ -79,29 +79,17 @@ export interface IndicatorMeasurement {
 
 /** Build the KPI-card result (shared contract) for one measured indicator. */
 export const buildKpiResult = (m: IndicatorMeasurement): KpiResult => {
-  const percentile = percentileOf(m.value, m.cohort);
-  return {
-    indicator: m.indicator,
-    label: INDICATOR_LABELS[m.indicator],
-    value: m.value,
-    median: m.median,
-    unit: INDICATOR_UNITS[m.indicator],
-    percentile,
-    status: classifyKpiStatus(concernPercentile(m.indicator, percentile)),
-  };
+  // TODO (run/04): monte o KpiResult. Use `percentileOf`, depois converta para a
+  // escala de "concern" (`concernPercentile`) e classifique (`classifyKpiStatus`).
+  // `INDICATOR_LABELS` e `INDICATOR_UNITS` dão label e unidade.
+  throw new Error("TODO: implemente buildKpiResult — ver docs/WORKSHOP.md");
 };
 
 /** Build the richer diagnosis indicator (shared contract). */
 export const buildCriticalIndicator = (
   m: IndicatorMeasurement,
 ): CriticalIndicator => {
-  const percentile = percentileOf(m.value, m.cohort);
-  return {
-    label: INDICATOR_LABELS[m.indicator],
-    value: m.value,
-    median: m.median,
-    unit: INDICATOR_UNITS[m.indicator],
-    percentile,
-    status: classifyCriticalStatus(concernPercentile(m.indicator, percentile)),
-  };
+  // TODO (run/04): como buildKpiResult, mas com a classificação de 3 estados
+  // (`classifyCriticalStatus`: critico / alta / saudavel).
+  throw new Error("TODO: implemente buildCriticalIndicator — ver docs/WORKSHOP.md");
 };

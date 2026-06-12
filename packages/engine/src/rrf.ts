@@ -38,27 +38,7 @@ export const reciprocalRankFusion = (
   lists: readonly RankedList[],
   k: number = RRF_K,
 ): FusedDoc[] => {
-  const accumulators = new Map<string, Accumulator>();
-
-  for (const list of lists) {
-    for (let i = 0; i < list.ids.length; i++) {
-      const id = list.ids[i]!;
-      const rank = i + 1;
-      const contribution = 1 / (k + rank);
-      const existing = accumulators.get(id);
-      if (existing === undefined) {
-        accumulators.set(id, { score: contribution, sources: [list.name] });
-      } else {
-        existing.score += contribution;
-        existing.sources.push(list.name);
-      }
-    }
-  }
-
-  const fused: FusedDoc[] = [];
-  for (const [id, acc] of accumulators) {
-    fused.push({ id, score: acc.score, sources: acc.sources });
-  }
-  fused.sort((left, right) => right.score - left.score);
-  return fused;
+  // TODO (run/03-rrf): some 1/(k + rank) por lista (rank 1-indexado), registre
+  // em quais listas cada id apareceu (`sources`) e ordene por score decrescente.
+  throw new Error("TODO: implemente reciprocalRankFusion — ver docs/WORKSHOP.md");
 };

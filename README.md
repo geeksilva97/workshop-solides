@@ -4,6 +4,12 @@ Plataforma de benchmarking de RH: compara os indicadores de uma empresa contra u
 
 A retrieval roda um pipeline híbrido de verdade — **BM25 + dense retrieval (embeddings Ollama) + RRF + reranker** — e tudo é persistido em **PostgreSQL**: usuários, sessões, empresas e o histórico de benchmarks (que alimenta as tendências período-a-período).
 
+> 🏗️ **Você está na branch `workshop/scaffold` — o ponto de partida.**
+> A estrutura, os contratos, o frontend, a API e a persistência já estão prontos;
+> os **algoritmos do `@workshop/engine` estão como `TODO`** e os testes começam
+> vermelhos. Sua missão é implementá-los. Comece por **[`docs/WORKSHOP.md`](docs/WORKSHOP.md)**.
+> O banco já sobe populado pelo `db/dump.sql`.
+
 ## A jornada
 
 Login → criar benchmark → pipeline → resultados → cohort → diagnóstico → tendências:
