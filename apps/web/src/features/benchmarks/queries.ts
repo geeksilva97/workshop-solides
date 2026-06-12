@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   benchmarkListSchema,
   benchmarkSchema,
+  catalogSchema,
   cohortSchema,
   companyOptionSchema,
   diagnosticSchema,
@@ -26,6 +27,14 @@ export function useCompanies() {
   return useQuery({
     queryKey: ['companies'],
     queryFn: () => api.get('/api/companies', z.array(companyOptionSchema)),
+  })
+}
+
+/** Cohort filter options (setores/portes/regiões) served from the corpus. */
+export function useCatalog() {
+  return useQuery({
+    queryKey: ['catalog'],
+    queryFn: () => api.get('/api/catalogs', catalogSchema),
   })
 }
 

@@ -6,3 +6,4 @@ export * from "./benchmark.js";
 export * from "./pipeline.js";
 export * from "./diagnostic.js";
 export * from "./trend.js";
+export * from "./catalog.js";
