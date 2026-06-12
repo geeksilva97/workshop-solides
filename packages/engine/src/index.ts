@@ -6,3 +6,4 @@ export * from "./rrf.ts";
 export * from "./percentiles.ts";
 export * from "./indicators.ts";
 export * from "./report.ts";
+export * from "./data/companies.ts";
